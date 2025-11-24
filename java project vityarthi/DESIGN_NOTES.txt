@@ -1,0 +1,46 @@
+Design & Diagrams (textual)
+
+System Architecture
+- Console UI (Main) -> Services (UserService, CourseService, ReportService) -> DataStore (persistence)
+
+Use Case (brief):
+- Create Student/Teacher
+- Create Course
+- Enroll Student
+- Assign Grade
+- Generate Transcript / Course Analytics
+
+UML (class simplified)
+
+Student
+- id: String
+- name: String
+- email: String
+- grades: Map<String, Double>
+
+Teacher
+- id, name, email
+
+Course
+- id, title, teacherId, studentIds, studentGrades
+
+DataStore
+- students: List<Student>
+- teachers: List<Teacher>
+- courses: List<Course>
+
+Sequence for Assign Grade
+Main -> CourseService.assignGrade(courseId, studentId, grade)
+CourseService -> Course.assignGrade(studentId, grade)
+CourseService -> Student.assignGrade(courseId, grade)
+CourseService -> DataStore.markDirty()
+
+Database/Storage Design
+- Using file-based serialization; if converting to RDBMS, schema tables: students(id,name,email), teachers(id,name,email), courses(id,title,teacher_id), enrollments(course_id,student_id), grades(course_id,student_id,grade)
+
+Non-functional requirements (examples provided in statement):
+- Performance: operations are O(n) linear searches (suitable for small datasets)
+- Usability: simple menu-driven console UI
+- Reliability: persistence with serialization and basic error messages
+- Maintainability: modular packages and services
+- Resource-efficiency: lightweight, no external dependencies
